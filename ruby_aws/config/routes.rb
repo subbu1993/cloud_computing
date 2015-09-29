@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'aws/run_instance'
+
   get 'welcome/index'
 
   root 'welcome#index'

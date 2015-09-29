@@ -1,0 +1,15 @@
+<pre>
+  <%= @hello %>
+</pre>
+<br/>
+<p><%= @config.inspect %></p>
+<br/>
+<p><%= @ec2.class.to_s %></p>
+<br/>
+<p><%= @return_from_config.class.to_s %></p>
+<p><%= @return_from_config.each do |key,value|
+        puts key
+        puts value
+      end %></p>
+<p><%= @resp.class.to_s %></p>
+<p><%= @run_an_instance.reservation_id %></p>

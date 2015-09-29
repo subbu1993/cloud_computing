@@ -10,12 +10,9 @@ module RubyAws
   class Application < Rails::Application
     config.action_mailer.delivery_method = :aws_sdk
 
-    Aws.config.update({
-      region: 'us-west-2',
-      credentials: Aws::Credentials.new(ENV['AWS_ACCESS_KEY_ID'], ENV['AWS_SECRET_ACCESS_KEY']),
-    })
+  
 
-    
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
