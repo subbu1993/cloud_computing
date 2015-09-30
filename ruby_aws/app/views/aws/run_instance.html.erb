@@ -1,4 +1,4 @@
 <P> I have a ruby app that will try and start instances </p>
 <p> <%= @my_instance_id %> </p>
 <p><%=  @get_a_state.class %></p>
-<p> <%= @get_a_state.instance_statuses[0].instance_state_name %> </p>
+<p> <%= @get_a_state.reservations[0].instances[0].state.name.to_s %> </p>
