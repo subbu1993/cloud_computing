@@ -1,15 +1,4 @@
-<pre>
-  <%= @hello %>
-</pre>
-<br/>
-<p><%= @config.inspect %></p>
-<br/>
-<p><%= @ec2.class.to_s %></p>
-<br/>
-<p><%= @return_from_config.class.to_s %></p>
-<p><%= @return_from_config.each do |key,value|
-        puts key
-        puts value
-      end %></p>
-<p><%= @resp.class.to_s %></p>
-<p><%= @run_an_instance.reservation_id %></p>
+<P> I have a ruby app that will try and start instances </p>
+<p> <%= @my_instance_id %> </p>
+<p><%=  @get_a_state.class %></p>
+<p> <%= @get_a_state.instance_statuses[0].instance_state_name %> </p>
