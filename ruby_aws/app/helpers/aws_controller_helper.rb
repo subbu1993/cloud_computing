@@ -1,0 +1,2 @@
+module AwsControllerHelper
+end
