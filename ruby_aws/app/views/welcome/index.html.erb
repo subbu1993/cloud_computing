@@ -8,15 +8,21 @@
   <h1>Hello, Welcome to the rails app that starts and stops EC2 instances!</h1>
 
     <div class ="dropdown">
-      <label> Number of Instances </label>
+      <br/>
       <button class= "btn btn-primary dropdown-toggle" type = "button" data-toggle="dropdown">Select number of instances<span class ="caret"></span></button>
       <ul class = "dropdown-menu">
-        <li>1</li>
-        <li>2</li>
-        <li>3</li>
-        <li>4</li>
-        <li>5</li>
-        <li>6</li>
+        <% (1..1000).each do |number_of_instance| %>
+          <p> <%= number_of_instance %> </p>
+        <% end %>
+      </ul>
+    </div>
+
+    <div class = "dropdown">
+      <br/>
+      <button class= "btn btn-primary dropdown-toggle" type = "button" data-toggle="dropdown">Select Action<span class ="caret"></span></button>
+      <ul class = "dropdown-menu">
+        <li> Start </li>
+        <li> Terminate </li>
       </ul>
     </div>
 </body>
