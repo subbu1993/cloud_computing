@@ -9,8 +9,11 @@ task :run_multiple_ec2_instances do
 
   # get a list of running instances
   running_instances = @ec2.describe_instances()
-  puts running_instances.class.to_s
-  binding.pry
+
+
+  if running_instances.reservations.empty?
+    puts "You do not currently have any instance running"
+  end
 
 
 
