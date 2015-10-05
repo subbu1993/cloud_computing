@@ -2,10 +2,9 @@ desc "Task to run multiple EC2 instances"
 task :run_multiple_ec2_instances do
   @credentials =  Aws::Credentials.new(ENV['AAK'], ENV['ASAK'])
   @return_from_config = Aws.config.update({
-    region: 'us-west-2',
     credentials: @credentials,
   })
-  @ec2 = Aws::EC2::Client.new
+  @ec2 = Aws::EC2::Client.new({region: 'us-west-2',})
 
   # get a list of running instances
   running_instances = @ec2.describe_instances()
