@@ -9,7 +9,6 @@ task :run_multiple_ec2_instances do
   # get a list of running instances
   running_instances = @ec2.describe_instances()
 
-
   if running_instances.reservations.empty?
     puts "You do not currently have any instance running"
 
@@ -24,22 +23,14 @@ task :run_multiple_ec2_instances do
       }) #successfully launched an instance
 
       # checking instance state
-      get_instance_state = @ec2.describe_instances({
-        instance_ids: [run_an_instance.instances[instance].instance_id.to_s],
-        })
-
-      while get_instance_state.reservations[instance_number].instances[instance_number].state.name.to_s == "pending"
-        get_instance_state = @ec2.describe_instances({
-          instance_ids: [run_an_instance.instances[instance_number].instance_id.to_s],
-          })
+      run_an_instance.instances.each do |instance|
+        while instance.state.name == "pending"
+          sleep 5
+        end
+        if instance.state.name == "running"
+          puts "launched instance #{instance.instace_id}"
+        end
       end
-
-      if get_instance_state.reservations[instance_number].instances[instance_number].state.name.to_s == "running"
-        puts "yes we have #{{instance_number - 1}} instance(s) running"
-      else
-          puts "I am sorry something went wrong with launching your instance"
-      end
-      binding.pry
     end
   end
 
