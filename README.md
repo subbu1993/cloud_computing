@@ -44,7 +44,7 @@ The above command fetches all of the required gems from source and downloads the
 
 The source code for the task is at
 
-** *ruby_aws/lib/tasks/run_instances.rake* **
+***ruby_aws/lib/tasks/run_instances.rake***
 
 From the directory ruby_aws run
 ` bundle exec rake run_multiple_ec2_instances `
