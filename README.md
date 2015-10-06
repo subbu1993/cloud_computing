@@ -13,9 +13,9 @@ A list of cloud assignments to be deployed on AWS to help me learn about cloud
 
 2. Add rbenv to bash so that it loads every time you open a terminal
 
-echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
+    echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
 
-source ~/.bash_profile
+    source ~/.bash_profile
 
 3. Install the required Ruby version
   ` rbenv install 2.0.0-p645 `
