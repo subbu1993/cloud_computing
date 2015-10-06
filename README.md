@@ -7,36 +7,27 @@ A list of cloud assignments to be deployed on AWS to help me learn about cloud
 
 ## Installing Ruby
 
-
+1. Use Homebrew to install ruby
   ` brew install rbenv ruby-build `
 
 
-Add rbenv to bash so that it loads every time you open a terminal
-
+2. Add rbenv to bash so that it loads every time you open a terminal
 
 echo 'if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi' >> ~/.bash_profile
 
-
 source ~/.bash_profile
 
-Install the required Ruby version
-
-
+3. Install the required Ruby version
   ` rbenv install 2.0.0-p645 `
 
 
-Set this version on the global environment
-
-
+4. Set this version on the global environment
   ` rbenv global 2.0.0p645 `
 
-
-Check if ruby has been properly installed using
-
+5. Check if ruby has been properly installed using
   ` ruby -v `
-
-
 *The above command should return the version of ruby installed which should be 2.0.0p645*
+
 
 
 GoRails.com has a good tutorial on installing ruby on different operating systems
@@ -98,8 +89,6 @@ Running the above without any arguments spins up *one EC2 instance* in the regio
 Example
 
 1.
-
-
   ` bundle exec rake run_multiple_ec2_instances[3,us-west-2,start] `
 
 
