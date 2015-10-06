@@ -62,10 +62,13 @@ Running the above without any arguments spins up *one EC2 instance* in the regio
 
 Example
 
-
-1. ` bundle exec rake run_multiple_ec2_instances[3,us-west-2,start] `
-    The above command spins up 3 instances in the us-west-2 region
+1. 
 
 
-2. ` bundle exec rake run_multiple_ec2_instances[2,us-west-2,terminate] `
-    Terminates 2 instances in the us-west-2 region
+  ` bundle exec rake run_multiple_ec2_instances[3,us-west-2,start] `
+  The above command spins up 3 instances in the us-west-2 region
+
+
+2.
+  ` bundle exec rake run_multiple_ec2_instances[2,us-west-2,terminate] `
+  Terminates 2 instances in the us-west-2 region
