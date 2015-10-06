@@ -9,7 +9,7 @@ A list of cloud assignments to be deployed on AWS to help me learn about cloud
 
 1. Use Homebrew to install ruby
 
-  ` brew install rbenv ruby-build `
+  ``` brew install rbenv ruby-build ```
 
 
 2. Add rbenv to bash so that it loads every time you open a terminal
