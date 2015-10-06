@@ -1,5 +1,6 @@
 desc "Task to run multiple EC2 instances"
 task :run_multiple_ec2_instances, [:number_of_instances, :region, :command] do |t,args|
+  args.with_defaults(:number_of_instances => 1, :region => 'us-west-2', :command => 'start')
   @credentials =  Aws::Credentials.new(ENV['AAK'], ENV['ASAK'])
   region = args[:region]
   @return_from_config = Aws.config.update({
@@ -39,18 +40,58 @@ task :run_multiple_ec2_instances, [:number_of_instances, :region, :command] do |
   elsif command == "terminate"
     get_all_instances = @ec2.describe_instance_status()
     number_of_running_instances = get_all_instances.instance_statuses.count
-    get_all_instances.instance_statuses.each do |instance|
-      if instance.instance_state.name == "running"
-        terminating_instance = @ec2.terminate_instances(instance_ids: [instance.instance_id])
-        puts "Terminating instance #{instance.instance_id}"
-        sleep 3
-        while terminating_instance.terminating_instances[0].current_state.name == "shutting-down"
-          puts "Instance #{instance.instance_id} is shutting-down"
+    if number_of_running_instances == number_of_instances
+      get_all_instances.instance_statuses.each do |instance|
+        if instance.instance_state.name == "running"
           terminating_instance = @ec2.terminate_instances(instance_ids: [instance.instance_id])
-          sleep 10
+          puts "Terminating instance #{instance.instance_id}"
+          sleep 3
+          while terminating_instance.terminating_instances[0].current_state.name == "shutting-down"
+            puts "Instance #{instance.instance_id} is shutting-down"
+            terminating_instance = @ec2.terminate_instances(instance_ids: [instance.instance_id])
+            sleep 10
+          end
+          if terminating_instance.terminating_instances[0].current_state.name == "terminated"
+            puts "Instance #{instance.instance_id} has been successfully terminated"
+          end
         end
-        if terminating_instance.terminating_instances[0].current_state.name == "terminated"
-          puts "Instance #{instance.instance_id} has been successfully terminated"
+      end
+
+    elsif number_of_running_instances < number_of_instances
+      puts "unfortunately you have only #{number_of_running_instances} running"
+      puts "Terminating all running instances"
+      get_all_instances.instance_statuses.each do |instance|
+        if instance.instance_state.name == "running"
+          terminating_instance = @ec2.terminate_instances(instance_ids: [instance.instance_id])
+          puts "Terminating instance #{instance.instance_id}"
+          sleep 3
+          while terminating_instance.terminating_instances[0].current_state.name == "shutting-down"
+            puts "Instance #{instance.instance_id} is shutting-down"
+            terminating_instance = @ec2.terminate_instances(instance_ids: [instance.instance_id])
+            sleep 10
+          end
+          if terminating_instance.terminating_instances[0].current_state.name == "terminated"
+            puts "Instance #{instance.instance_id} has been successfully terminated"
+          end
+        end
+      end
+
+    else
+      number_to_terminate = number_of_instances - 1
+      (0..number_to_terminate).each do |terminate_index|
+        instance = get_all_instances.instance_statuses[terminate_index]
+        if instance.instance_state.name == "running"
+          terminating_instance = @ec2.terminate_instances(instance_ids: [instance.instance_id])
+          puts "Terminating instance #{instance.instance_id}"
+          sleep 3
+          while terminating_instance.terminating_instances[0].current_state.name == "shutting-down"
+            puts "Instance #{instance.instance_id} is shutting-down"
+            terminating_instance = @ec2.terminate_instances(instance_ids: [instance.instance_id])
+            sleep 10
+          end
+          if terminating_instance.terminating_instances[0].current_state.name == "terminated"
+            puts "Instance #{instance.instance_id} has been successfully terminated"
+          end
         end
       end
     end
