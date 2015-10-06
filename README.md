@@ -40,7 +40,7 @@ GoRails.com has a good tutorial on installing ruby on different operating system
 
 
 Do take a look if you have queries
-  [https://gorails.com/setup/osx/10.10-yosemite#ruby]
+  [Go Rails Ruby installation tutorial](https://gorails.com/setup/osx/10.10-yosemite#ruby)
 
 
 ## Clone in the repository
