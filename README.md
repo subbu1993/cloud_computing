@@ -8,6 +8,7 @@ A list of cloud assignments to be deployed on AWS to help me learn about cloud
 ## Installing Ruby
 
 1. Use Homebrew to install ruby
+
   ` brew install rbenv ruby-build `
 
 
@@ -18,15 +19,20 @@ A list of cloud assignments to be deployed on AWS to help me learn about cloud
     source ~/.bash_profile
 
 3. Install the required Ruby version
+
   ` rbenv install 2.0.0-p645 `
 
 
 4. Set this version on the global environment
+
   ` rbenv global 2.0.0p645 `
 
 5. Check if ruby has been properly installed using
+
   ` ruby -v `
-*The above command should return the version of ruby installed which should be 2.0.0p645*
+
+
+    *The above command should return the version of ruby installed which should be 2.0.0p645*
 
 
 
