@@ -89,7 +89,7 @@ Running the above without any arguments spins up *one EC2 instance* in the regio
 **To Provide command line arguments**
 
 
-  bundle exec rake run_multiple_ec2_instances[number_of_instances_to_spin_up_or_down,region,start_or_terminate]
+  ``` bundle exec rake run_multiple_ec2_instances[number_of_instances_to_spin_up_or_down,region,start_or_terminate] ```
 
 
 Example
