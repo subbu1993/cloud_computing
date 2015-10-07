@@ -1,0 +1,30 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "A Sample JSON that is going to spin up an EC2 instance and install apache on it",
+  "Parameters": {
+    "AWSKeyPair": {
+      "Description": " A working AWS keypair to run the EC2 credentials ",
+      "Type": "AWS::EC2::KeyPair::KeyName",
+      "ConstraintDescription": "Must be the name of the existing keyPair"
+    },
+    "InstanceType": {
+      "Description": "Select the type of EC2 instance to run",
+      "Default": "t2.micro",
+      "Type": "String",
+      "AllowedValues": ["t2.micro",
+        "t1.micro"]
+    }
+  },
+  "Resources": {
+    "EC2Instance": {
+      "Description": "The sample EC2 instance that will be generated",
+      "Type": "AWS::EC2::Instance"
+    }
+  },
+  "Outputs": {
+    "InstanceID": {
+      "Description": "The instance ID of the machine that has spun up",
+      "Value": "EC2Instance"
+    }
+  }
+}
