@@ -1,8 +1,6 @@
 desc " To stop all instances running in every region "
 task :stop_all_instances do
-  args.with_defaults(:number_of_instances => 1, :region => 'us-west-2', :command => 'start')
   @credentials =  Aws::Credentials.new(ENV['AAK'], ENV['ASAK'])
-  region = args[:region]
   @return_from_config = Aws.config.update({
     credentials: @credentials,
   })
