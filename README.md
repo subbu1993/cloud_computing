@@ -74,6 +74,16 @@ The above command fetches all of the required gems from source and downloads the
 
 ##Run the task to spin instances up
 
+Set the environment variables for the Access Key and the Secret Key
+
+AAK - Access Key
+
+ASAK - Secret Key
+
+
+Note you could also copy paste the keys directly in the code (Caution: Do not push it up to github)
+
+
 The source code for the task is at
 
 ***ruby_aws/lib/tasks/run_instances.rake***
