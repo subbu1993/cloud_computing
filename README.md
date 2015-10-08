@@ -117,13 +117,11 @@ Example
 
   Terminates 2 instances in the us-west-2 region
 
-  ## Prevent losing money
-  Run the task `stop_all_instances`
-
-  using
+##Prevent losing money
+  Run the task `stop_all_instances` using
 
   `bundle exec rake stop_all_instances`
 
   To stop all instances across all regions.
 
-  Use the task as a method to prevent unwanted instances running at different region
+  Use the task as a method to prevent unwanted instances running at different regions
