@@ -24,9 +24,21 @@
      "ConstraintDescription" : "must be a valid EC2 instance type."
    }
   },
+  "Mappings": {
+    "AWSInstanceType2Arch": {
+      "t2.micro": {
+        "Arch": "HVM64"
+      }
+    },
+    "AWSRegionArch2AMI": {
+      "us-west-2": {
+        "HVM64": "ami-87ea13c3"
+      }
+    }
+  },
   "Resources": {
-    "EC2Instance": {
-      "Description": "The sample EC2 instance that will be generated",
+    "WebServerEC2Instance": {
+      "Description": "The web server EC2 instance that will be generated",
       "Type": "AWS::EC2::Instance",
       "Metadata" : {
        "AWS::CloudFormation::Init" : {
@@ -68,7 +80,56 @@
            }
          }
        }
+     },
+     "Properties": {
+       "ImageId": {
+         "Fn::FindInMap": ["AWSRegionArch2AMI",
+          {
+           "Ref": "AWS::Region"
+          },
+          {
+            "Fn::FindInMap": [
+              "AWSInstanceType2Arch",
+              {
+                "Ref": "InstanceType"
+              },
+              "Arch"
+            ]
+          }
+         ]
+       },
+       "InstanceType": {
+         "Ref": "InstanceType"
+       },
+       "SecurityGroups": [
+        {
+          "Ref": "WebServerSecurityGroup"
+        }
+      ],
+      "KeyName": {
+        "Ref": "KeyName"
+      }
      }
+    }
+  },
+  "WebServerSecurityGroup": {
+    "Type": "AWS::EC2::SecurityGroup",
+    "Properties": {
+      "GroupDescription": "Enable HTTP access via port 80",
+      "SecurityGroupIngress": [
+        {
+            "IpProtocol": "tcp",
+            "FromPort": "80",
+            "ToPort": "80",
+            "CidrIp": "0.0.0.0/0"
+        },
+        {
+            "IpProtocol": "tcp",
+            "FromPort": "22",
+            "ToPort": "22",
+            "CidrIp": "SSHLocation"
+        }
+      ]
     }
   },
   "Outputs": {
