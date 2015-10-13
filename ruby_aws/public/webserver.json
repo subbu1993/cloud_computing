@@ -32,11 +32,31 @@
     },
     "AWSRegionArch2AMI": {
       "us-west-2": {
-        "HVM64": "ami-87ea13c3"
+        "HVM64": "ami-9ff7e8af"
       }
     }
   },
   "Resources": {
+    "WebServerSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "Enable HTTP access via port 80",
+        "SecurityGroupIngress": [
+          {
+              "IpProtocol": "tcp",
+              "FromPort": "80",
+              "ToPort": "80",
+              "CidrIp": "0.0.0.0/0"
+          },
+          {
+              "IpProtocol": "tcp",
+              "FromPort": "22",
+              "ToPort": "22",
+              "CidrIp": "0.0.0.0/0"
+          }
+        ]
+      }
+    },
     "WebServerEC2Instance": {
       "Description": "The web server EC2 instance that will be generated",
       "Type": "AWS::EC2::Instance",
@@ -76,8 +96,27 @@
                "mode"  : "000600",
                "owner" : "apache",
                "group" : "apache"
-             }
-           }
+             },
+             "/etc/cfn/cfn-hup.conf": {
+               "content": {
+                 "Fn::Join": ["",["[main]\n","stack=",{
+                   "Ref": "AWS::StackId"
+                  },
+                  "\n",
+                  "region=",
+                {
+                    "Ref": "AWS::Region"
+                },
+                        "\n"
+                    ]
+                ]
+            },
+            "mode": "000400",
+            "owner": "root",
+            "group": "root"
+
+          }
+          }
          }
        }
      },
@@ -107,29 +146,36 @@
         }
       ],
       "KeyName": {
-        "Ref": "KeyName"
+        "Ref": "AWSKeyPair"
+      },"UserData": {
+          "Fn::Base64": {
+              "Fn::Join":   ["",["#!/bin/bash -xe\n","yum update -y aws-cfn-bootstrap\n","# Install the files and packages from the metadata\n",
+          "/opt/aws/bin/cfn-init -v ",
+          "--stack ",{
+          "Ref": "AWS::StackName"
+          },
+          "--resource WebServerInstance ",
+          "--configsets InstallAndRun ",
+          "--region ",{
+          "Ref": "AWS::Region"
+          },"\n",
+          "# Signal the status from cfn-init\n",
+          "/opt/aws/bin/cfn-signal -e $? ",
+          "         --stack ",{
+          "Ref": "AWS::StackName"
+          },
+          "--resource WebServerInstance ",
+          "--region ",
+          {
+            "Ref": "AWS::Region"
+          },
+            "\n"
+                  ]
+              ]
+          }
+
       }
      }
-    }
-  },
-  "WebServerSecurityGroup": {
-    "Type": "AWS::EC2::SecurityGroup",
-    "Properties": {
-      "GroupDescription": "Enable HTTP access via port 80",
-      "SecurityGroupIngress": [
-        {
-            "IpProtocol": "tcp",
-            "FromPort": "80",
-            "ToPort": "80",
-            "CidrIp": "0.0.0.0/0"
-        },
-        {
-            "IpProtocol": "tcp",
-            "FromPort": "22",
-            "ToPort": "22",
-            "CidrIp": "SSHLocation"
-        }
-      ]
     }
   },
   "Outputs": {
