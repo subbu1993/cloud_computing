@@ -126,15 +126,15 @@
           {
            "Ref": "AWS::Region"
           },
-          {
-            "Fn::FindInMap": [
-              "AWSInstanceType2Arch",
-              {
-                "Ref": "InstanceType"
-              },
-              "Arch"
-            ]
-          }
+            {
+              "Fn::FindInMap": [
+                "AWSInstanceType2Arch",
+                {
+                  "Ref": "InstanceType"
+                },
+                "Arch"
+              ]
+            }
          ]
        },
        "InstanceType": {

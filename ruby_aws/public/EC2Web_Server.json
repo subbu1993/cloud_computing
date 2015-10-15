@@ -32,7 +32,7 @@
     },
 
     "AWSRegionArch2AMI" : {
-      "us-west-2"      : { "PV64" : "ami-af86c69f", "HVM64" : "ami-8786c6b7", "HVMG2" : "ami-47296a77"  }
+      "us-west-2"      : { "HVM64" : "ami-9ff7e8af" }
     }
   },
 
@@ -51,7 +51,8 @@
           "Install" : {
             "packages" : {
               "yum" : {
-                "httpd"        : []
+                "httpd"        : [ ],
+                "php"          : [ ]
               }
             },
 
@@ -72,32 +73,76 @@
                 "owner" : "apache",
                 "group" : "apache"
               },
-              "services" : {
-                "sysvinit" : {
-                  "httpd"   : { "enabled" : "true", "ensureRunning" : "true" }
-                }
-              }
-            }
-          },
-          "Properties": {
-            "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
-                              { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
-            "InstanceType"   : { "Ref" : "InstanceType" },
-            "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
-            "KeyName"        : { "Ref" : "KeyName" },
-            "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
-                 "#!/bin/bash -xe\n",
-                 "yum update -y aws-cfn-bootstrap\n",
+              "/etc/cfn/cfn-hup.conf" : {
+               "content" : { "Fn::Join" : ["", [
+                 "[main]\n",
+                 "stack=", { "Ref" : "AWS::StackId" }, "\n",
+                 "region=", { "Ref" : "AWS::Region" }, "\n"
+               ]]},
+               "mode"    : "000400",
+               "owner"   : "root",
+               "group"   : "root"
+             },
 
-                 "# Install the files and packages from the metadata\n",
-                 "/opt/aws/bin/cfn-init -v ",
+             "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
+               "content": { "Fn::Join" : ["", [
+                 "[cfn-auto-reloader-hook]\n",
+                 "triggers=post.update\n",
+                 "path=Resources.WebServerInstance.Metadata.AWS::CloudFormation::Init\n",
+                 "action=/opt/aws/bin/cfn-init -v ",
                  "         --stack ", { "Ref" : "AWS::StackName" },
                  "         --resource WebServerInstance ",
                  "         --configsets InstallAndRun ",
-                 "         --region ", { "Ref" : "AWS::Region" }, "\n"
-    		    ]]}}
+                 "         --region ", { "Ref" : "AWS::Region" }, "\n",
+                 "runas=root\n"
+               ]]}
+             }
+           },
+              "services" : {
+                "sysvinit" : {
+                  "httpd"   : { "enabled" : "true", "ensureRunning" : "true" },
+                  "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
+                             "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
+                }
+              }
+            }
           }
-        }
+        },
+      "Properties": {
+        "ImageId": {
+          "Fn::FindInMap": ["AWSRegionArch2AMI",{ "Ref": "AWS::Region" },
+                            { "Fn::FindInMap": [ "AWSInstanceType2Arch", { "Ref": "InstanceType" }, "Arch" ]  } ]
+        },
+        "InstanceType"   : { "Ref" : "InstanceType" },
+        "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
+        "KeyName"        : { "Ref" : "KeyName" },
+        "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
+             "#!/bin/bash -xe\n",
+             "yum update -y aws-cfn-bootstrap\n",
+
+             "# Install the files and packages from the metadata\n",
+             "/opt/aws/bin/cfn-init -v ",
+             "         --stack ", { "Ref" : "AWS::StackName" },
+             "         --resource WebServerInstance",
+             "         --configsets InstallAndRun",
+             "         --region ", { "Ref" : "AWS::Region" }, "\n",
+             "# Signal the status from cfn-init\n",
+              "/opt/aws/bin/cfn-signal -e $? ",
+              "         --stack ",
+              {
+
+                  "Ref": "AWS::StackName"
+
+              },
+              "         --resource WebServerInstance ",
+              "         --region ",
+              {
+
+                  "Ref": "AWS::Region"
+
+              },
+              "\n"
+		    ]]}}
       }
     },
     "WebServerSecurityGroup" : {
