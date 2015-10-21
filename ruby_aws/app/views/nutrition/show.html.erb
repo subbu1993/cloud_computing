@@ -1,2 +1,27 @@
 <h1>Nutrition#show</h1>
 <p>Find me in app/views/nutrition/show.html.erb</p>
+<p>Showing the nutrition information for <%= @passed_in %></p>
+<table border="2">
+  <tr>
+    <th>Component</th>
+    <th>Content</th>
+  </tr>
+  <tr>
+    <td>Carbohydrates</td>
+    <td>%</td>
+  </tr>
+  <tr>
+    <td>Fat</td>
+    <td>%</td>
+  </tr>
+  <tr>
+    <td>Sugar</td>
+    <td>%</td>
+  </tr>
+  <tr>
+    <td>Protein</td>
+    <td>%</td>
+  </tr>
+</table>
+
+<%= @numbers %>
