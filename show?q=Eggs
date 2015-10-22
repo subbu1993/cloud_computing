@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RubyAws</title>
+  <link data-turbolinks-track="true" href="/stylesheets/default.css" media="all" rel="stylesheet" />
+  <script data-turbolinks-track="true" src="/javascripts/default.js"></script>
+  <meta content="authenticity_token" name="csrf-param" />
+<meta content="xoBISjTAlaWuYRiXSblyziFGoBZC6zGgTogz8Mi7qDQ=" name="csrf-token" />
+</head>
+<body>
+
+<h1>Nutrition Value</h1>
+<p>Showing the nutrition information for Eggs</p>
+<table border="2">
+  <tr>
+    <th>Component</th>
+    <th>Content (%)</th>
+  </tr>
+  <tr>
+    <td>Carbohydrates</td>
+    <td>35</td>
+  </tr>
+  <tr>
+    <td>Fat</td>
+    <td>50</td>
+  </tr>
+  <tr>
+    <td>Sugar</td>
+    <td>7</td>
+  </tr>
+  <tr>
+    <td>Protein</td>
+    <td>8</td>
+  </tr>
+</table>
+
+
+
+
+</body>
+</html>
