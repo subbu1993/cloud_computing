@@ -19,7 +19,14 @@
       <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
       <span class="caret"></span></button>
       <ul class="dropdown-menu">
-          <li class="dropdown"><a href="http://localhost:3000/nutrition/show?q="> </a></li>
+        <% food_items = FoodInfo.all
+             food_items.each do | food_item |
+               url = "http://localhost:3000/nutrition/show?q=" + food_item.name.to_s
+            %>
+                      <li class="dropdown menu-item"><a href= <%= url  %>>   <%= food_item.name.to_s %> </a></li>
+
+          <%  end %>
+
       </ul>
     </div>
   </div>
