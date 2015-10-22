@@ -1,0 +1,42 @@
+<html>
+<head>
+  <title>RubyAws</title>
+  <link data-turbolinks-track="true" href="/stylesheets/default.css" media="all" rel="stylesheet" />
+  <script data-turbolinks-track="true" src="/javascripts/default.js"></script>
+  <meta content="authenticity_token" name="csrf-param" />
+<meta content="Q054a//z8sQy2lkQznvkFh1CjzZ8EdPOfBJMfY7DGCE=" name="csrf-token" />
+</head>
+<body>
+<html>
+<head>
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+  <style>
+    li.menu-item
+    {
+      color: blue;
+    }
+  </style>
+
+</head>
+<body>
+  <h1><b><center>Hello, Welcome to the nutrition info page!</center></b></h1>
+  <br/>
+  <label> Pick a food item</label>
+  <div class="container">
+    <div class="dropdown">
+      <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Dropdown Example
+      <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+
+        <%= food_items = FoodInfo.all
+
+            food_items.each do |food_item| %>
+          <li class="dropdown"><a href="http://localhost:3000/nutrition/show?q=<%= food_item %>"><%= food_item %> </a></li>
+        <%= end %>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

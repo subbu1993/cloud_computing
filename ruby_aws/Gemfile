@@ -44,4 +44,4 @@ gem 'aws-sdk', '~> 2'
 
 gem 'pry'
 
-gem 'mysql2'
+gem 'mysql2', '~> 0.3.18'
