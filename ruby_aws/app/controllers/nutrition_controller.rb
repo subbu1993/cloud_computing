@@ -2,6 +2,7 @@ class NutritionController < ApplicationController
   include NutritionHelper
   def show
     @passed_in = params[:q]
+    food_item = FoodInfo.find_by(name: @passed_in+"\n")
     numbers = rand_sum 4
     @numbers_0 = numbers[0]
     @numbers_1 = numbers[1]
