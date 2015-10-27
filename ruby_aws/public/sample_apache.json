@@ -70,12 +70,12 @@
                 "owner"   : "apache",
                 "group"   : "apache"
               },
-              "/var/www/html/Sample.java": {
+              "/ec2-user/home/Sample.java": {
                 "content": {"Fn::Join" : ["", [
                   "import java.io.*;\n",
                   "public class Sample\n",
                   "{\n",
-                    "public static void main()\n",
+                    "public static void main(String args[])\n",
                     "{\n",
                       "System.out.println(\"Hello World\");\n",
                     "}\n",
@@ -144,7 +144,7 @@
              "#!/bin/bash -xe\n",
              "java -version\n",
              "echo \"kahbfkabhd\" >> input.txt\n",
-             "cd /var/www/html/Sample.java\n",
+             "cd /ec2-user/home\n",
              "javac Sample.java\n",
              "java Sample\n"
         ]]}}
