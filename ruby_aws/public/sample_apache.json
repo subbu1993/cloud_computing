@@ -9,8 +9,7 @@
       "Type": "String",
       "MinLength": "9",
       "MaxLength": "18",
-      "Default": "128.238.0.0/16",
-      "AllowedPattern": "128.238.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})",
+      "Default": "0.0.0.0/0",
       "ConstraintDescription": "Must be a valid IP CIDR range of the form x.x.x.x/x"
     },
     "InstanceType" : {
@@ -48,7 +47,8 @@
           "config" : {
             "packages" : {
               "yum" : {
-                "httpd"             : []
+                "httpd"             : [],
+                "java-1.7.0-openjdk-devel": []
               }
             },
 
@@ -70,8 +70,18 @@
                 "owner"   : "apache",
                 "group"   : "apache"
               },
-
-
+              "/var/www/html/Sample.java": {
+                "content": {"Fn::Join" : ["", [
+                  "import java.io.*;\n",
+                  "public class Sample\n",
+                  "{\n",
+                    "public static void main()\n",
+                    "{\n",
+                      "System.out.println(\"Hello World\");\n",
+                    "}\n",
+                  "}"
+                  ]]}
+              },
               "/etc/cfn/cfn-hup.conf" : {
                 "content" : { "Fn::Join" : ["", [
                   "[main]\n",
@@ -129,7 +139,14 @@
              "/opt/aws/bin/cfn-signal -e $? ",
              "         --stack ", { "Ref" : "AWS::StackName" },
              "         --resource WebServerInstance ",
-             "         --region ", { "Ref" : "AWS::Region" }, "\n"
+             "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+             "#!/bin/bash -xe\n",
+             "java -version\n",
+             "echo \"kahbfkabhd\" >> input.txt\n",
+             "cd /var/www/html/Sample.java\n",
+             "javac Sample.java\n",
+             "java Sample\n"
         ]]}}
       },
       "CreationPolicy" : {

@@ -47,7 +47,7 @@
         "DBInstanceClass": "db.t1.micro",
         "Engine": "MySQL",
         "MasterUsername": "root",
-        "MasterUserPassword": "subbu"
+        "MasterUserPassword": "subbu1993"
       }
     },
 
@@ -59,7 +59,8 @@
           "config" : {
             "packages" : {
               "yum" : {
-                "httpd"             : []
+                "httpd"             : [],
+                "java-1.7.0-openjdk-devel": []
               }
             },
 
