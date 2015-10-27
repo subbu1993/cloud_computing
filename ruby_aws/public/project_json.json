@@ -65,6 +65,18 @@
             },
 
             "files" : {
+              "/ec2-user/home/Sample.java": {
+                "content": {"Fn::Join" : ["", [
+                  "import java.io.*;\n",
+                  "public class Sample\n",
+                  "{\n",
+                    "public static void main(String args[])\n",
+                    "{\n",
+                      "System.out.println(\"Hello World\");\n",
+                    "}\n",
+                  "}"
+                  ]]}
+              },
 
               "/var/www/html/index.html" : {
                 "content" : { "Fn::Join" : ["", [
@@ -141,7 +153,12 @@
              "/opt/aws/bin/cfn-signal -e $? ",
              "         --stack ", { "Ref" : "AWS::StackName" },
              "         --resource WebServerInstance ",
-             "         --region ", { "Ref" : "AWS::Region" }, "\n"
+             "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+             "#!/bin/bash -xe\n",
+             "cd /ec2-user/home\n",
+             "javac Sample.java\n",
+             "java Sample\n"
         ]]}}
       },
       "CreationPolicy" : {
