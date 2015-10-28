@@ -23,7 +23,25 @@
       "Description" : "Name of an existing EC2 KeyPair to enable SSH access to the instance",
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription" : "Can contain only ASCII characters."
+    },
+    "DBName": {
+      "Type": "String",
+      "Default": "Nutrition",
+      "AllowedValues": ["Nutrition"]
+    },
+    "DBUser": {
+      "Type": "String",
+      "NoEcho": "true",
+      "Default": "root",
+      "AllowedValues": ["root"]
+    },
+    "DBPassword": {
+      "NoEcho": "true",
+      "Default": "subbu1993",
+      "Type": "String",
+      "AllowedValues": ["subbu1993"]
     }
+
 
   },
 
@@ -48,7 +66,10 @@
             "packages" : {
               "yum" : {
                 "httpd"             : [],
-                "java-1.7.0-openjdk-devel": []
+                "java-1.7.0-openjdk-devel": [],
+                "mysql": [],
+                "mysql-server": [],
+                "mysql-libs": []
               }
             },
 
@@ -109,7 +130,8 @@
               "sysvinit" : {
                 "httpd"    : { "enabled" : "true", "ensureRunning" : "true" },
                 "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
-                    "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
+                    "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]},
+                "mysqld": { "enabled" : "true", "ensureRunning" : "true" }
               }
             }
           }
@@ -142,8 +164,9 @@
              "         --region ", { "Ref" : "AWS::Region" }, "\n",
 
              "#!/bin/bash -xe\n",
+             "mysqladmin -u root --password= password subbu1993\n",
+             "mysql --user=\"root\" --password=\"subbu1993\" --execute=\"CREATE DATABASE Nutrition;\"\n",
              "java -version\n",
-             "echo \"kahbfkabhd\" >> input.txt\n",
              "cd /ec2-user/home\n",
              "javac Sample.java\n",
              "java Sample\n"

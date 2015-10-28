@@ -38,18 +38,7 @@
   },
 
   "Resources" : {
-    "RDSInstance": {
-      "Type": "AWS::RDS::DBInstance",
-      "Properties": {
-        "AllocatedStorage": "5",
-        "DBName": "Nutrition",
-        "DBInstanceIdentifier": "NutritionDB",
-        "DBInstanceClass": "db.t1.micro",
-        "Engine": "MySQL",
-        "MasterUsername": "root",
-        "MasterUserPassword": "subbu1993"
-      }
-    },
+
 
     "WebServerInstance": {
       "Type" : "AWS::EC2::Instance",
@@ -158,7 +147,7 @@
              "         --resource WebServerInstance ",
              "         --region ", { "Ref" : "AWS::Region" }, "\n",
              "#!/bin/bash -xe\n",
-             "mysql -h ", {"Fn::GetAtt" : [ "RDSInstance", "Endpoint.Address" ]}, " -u root -p\n",
+             "mysql -h localhost -u root -p\n",
              "use Nutrition;\n",
              "create table food_info(id int(5), name varchar(30));\n",
              "insert into food_info values((1,\"Oats\"),(2,\"Cheese\"));",
