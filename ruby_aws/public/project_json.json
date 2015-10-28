@@ -38,7 +38,7 @@
   },
 
   "Resources" : {
-    "RDSInstace": {
+    "RDSInstance": {
       "Type": "AWS::RDS::DBInstance",
       "Properties": {
         "AllocatedStorage": "5",
@@ -60,7 +60,8 @@
             "packages" : {
               "yum" : {
                 "httpd"             : [],
-                "java-1.7.0-openjdk-devel": []
+                "java-1.7.0-openjdk-devel": [],
+                "mysql": []
               }
             },
 
@@ -123,7 +124,8 @@
               "sysvinit" : {
                 "httpd"    : { "enabled" : "true", "ensureRunning" : "true" },
                 "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
-                    "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]}
+                    "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]},
+                "mysql": {"enabled": "true", "ensureRunning": "true"}
               }
             }
           }
@@ -149,16 +151,25 @@
              "# Start up the cfn-hup daemon to listen for changes to the Web Server metadata\n",
              "/opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'\n",
 
+
              "# Signal the status from cfn-init\n",
              "/opt/aws/bin/cfn-signal -e $? ",
              "         --stack ", { "Ref" : "AWS::StackName" },
              "         --resource WebServerInstance ",
              "         --region ", { "Ref" : "AWS::Region" }, "\n",
+             "#!/bin/bash -xe\n",
+             "mysql -h ", {"Fn::GetAtt" : [ "RDSInstance", "Endpoint.Address" ]}, " -u root -p\n",
+             "use Nutrition;\n",
+             "create table food_info(id int(5), name varchar(30));\n",
+             "insert into food_info values((1,\"Oats\"),(2,\"Cheese\"));",
+             "exit;\n",
 
              "#!/bin/bash -xe\n",
              "cd /ec2-user/home\n",
+             "wget  http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.30.tar.gz\n",
+             "tar -xvzf mysql-connector-java-5.1.30.tar.gz\n",
              "javac Sample.java\n",
-             "java Sample\n"
+             "java -cp mysql-connector-java-5.1.30.bin.jar:. Sample\n"
         ]]}}
       },
       "CreationPolicy" : {
