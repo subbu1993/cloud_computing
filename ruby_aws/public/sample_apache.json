@@ -188,6 +188,15 @@
           {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
         ]
       }
+    },
+    "MyAutoScalingGroup": {
+     "Type" : "AWS::AutoScaling::AutoScalingGroup",
+     "Properties" : {
+        "AvailabilityZones": [{ "Fn::GetAtt" : ["WebServerInstance", "AvailabilityZone"] }],
+        "InstanceId" : {"Ref": "WebServerInstance"},
+        "MaxSize" : "1",
+        "MinSize" : "1"
+      }
     }
   },
 
