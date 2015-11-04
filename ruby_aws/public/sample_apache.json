@@ -189,13 +189,25 @@
         ]
       }
     },
+    "MyLoadbalancer" : {
+      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
+      "Properties": {
+        "AvailabilityZones": [{ "Fn::GetAtt" : ["WebServerInstance", "AvailabilityZone"] }],
+        "Listeners": [{
+        "LoadBalancerPort": "80",
+        "InstancePort": "80",
+        "Protocol": "HTTP"
+      }]
+    }
+    },
     "MyAutoScalingGroup": {
      "Type" : "AWS::AutoScaling::AutoScalingGroup",
      "Properties" : {
         "AvailabilityZones": [{ "Fn::GetAtt" : ["WebServerInstance", "AvailabilityZone"] }],
         "InstanceId" : {"Ref": "WebServerInstance"},
-        "MaxSize" : "1",
-        "MinSize" : "1"
+        "MaxSize" : "2",
+        "MinSize" : "2",
+        "LoadBalancerNames" :  [ { "Ref" : "MyLoadbalancer" } ]
       }
     }
   },
