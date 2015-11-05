@@ -56,10 +56,10 @@
   },
 
   "Resources" : {
-    "WebServerLaunchConfig": {
-      "Type": "AWS::AutoScaling::LaunchConfiguration",
+    "MyRdsInstance": {
+      "Type": "AWS::RDS::DBInstance",
       "Metadata" : {
-        "Comment" : "Install a simple PHP application",
+        "Comment" : "put data into the instance",
         "AWS::CloudFormation::Init" : {
           "config" : {
             "packages" : {
@@ -118,6 +118,8 @@
         }
       },
       "Properties": {
+        "AllocatedStorage": "5",
+        "DBInstanceClass": "db.t1.micro",
         "ImageId" : { "Fn::FindInMap" : [ "AWSRegionArch2AMI", { "Ref" : "AWS::Region" },
                           { "Fn::FindInMap" : [ "AWSInstanceType2Arch", { "Ref" : "InstanceType" }, "Arch" ] } ] },
         "InstanceType"   : { "Ref" : "InstanceType" },
@@ -152,103 +154,7 @@
         }
       }
     },
-    "WebServerScaleUpPolicy" : {
-          "Type" : "AWS::AutoScaling::ScalingPolicy",
-          "Properties" : {
-            "AdjustmentType" : "ChangeInCapacity",
-            "AutoScalingGroupName" : { "Ref" : "MyAutoScalingGroup" },
-            "Cooldown" : "60",
-            "ScalingAdjustment" : "1"
-          }
-        },
-        "WebServerScaleDownPolicy" : {
-          "Type" : "AWS::AutoScaling::ScalingPolicy",
-          "Properties" : {
-            "AdjustmentType" : "ChangeInCapacity",
-            "AutoScalingGroupName" : { "Ref" : "MyAutoScalingGroup" },
-            "Cooldown" : "60",
-            "ScalingAdjustment" : "-1"
-          }
-        },
 
-        "CPUAlarmHigh": {
-         "Type": "AWS::CloudWatch::Alarm",
-         "Properties": {
-            "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
-            "MetricName": "CPUUtilization",
-            "Namespace": "AWS/EC2",
-            "Statistic": "Average",
-            "Period": "60",
-            "EvaluationPeriods": "2",
-            "Threshold": "50",
-            "AlarmActions": [ { "Ref": "WebServerScaleUpPolicy" } ],
-            "Dimensions": [
-              {
-                "Name": "AutoScalingGroupName",
-                "Value": { "Ref": "MyAutoScalingGroup" }
-              }
-            ],
-            "ComparisonOperator": "GreaterThanThreshold"
-          }
-        },
-        "CPUAlarmLow": {
-         "Type": "AWS::CloudWatch::Alarm",
-         "Properties": {
-            "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
-            "MetricName": "CPUUtilization",
-            "Namespace": "AWS/EC2",
-            "Statistic": "Average",
-            "Period": "60",
-            "EvaluationPeriods": "2",
-            "Threshold": "30",
-            "AlarmActions": [ { "Ref": "WebServerScaleDownPolicy" } ],
-            "Dimensions": [
-              {
-                "Name": "AutoScalingGroupName",
-                "Value": { "Ref": "MyAutoScalingGroup" }
-              }
-            ],
-            "ComparisonOperator": "LessThanThreshold"
-          }
-        },
-    "WebServerSecurityGroup" : {
-      "Type" : "AWS::EC2::SecurityGroup",
-      "Properties" : {
-        "GroupDescription" : "Enable HTTP access via port 80",
-        "SecurityGroupIngress" : [
-          {"IpProtocol" : "tcp", "FromPort" : "80", "ToPort" : "80", "CidrIp" : "0.0.0.0/0"},
-          {"IpProtocol" : "tcp", "FromPort" : "22", "ToPort" : "22", "CidrIp" : { "Ref" : "SSHLocation"}}
-        ]
-      }
-    },
-    "MyLoadbalancer" : {
-      "Type" : "AWS::ElasticLoadBalancing::LoadBalancer",
-      "Properties": {
-        "AvailabilityZones": {     "Fn::GetAZs": "" },
-        "Listeners": [{
-          "LoadBalancerPort": "80",
-          "InstancePort": "80",
-          "Protocol": "HTTP"
-        }],
-        "HealthCheck": {
-          "Target": "HTTP:80/",
-          "HealthyThreshold": "3",
-          "UnhealthyThreshold": "5",
-          "Interval": "30",
-          "Timeout": "5"
-        }
-      }
-    },
-    "MyAutoScalingGroup": {
-     "Type" : "AWS::AutoScaling::AutoScalingGroup",
-     "Properties" : {
-        "AvailabilityZones": { "Fn::GetAZs": ""},
-        "LaunchConfigurationName": {"Ref": "WebServerLaunchConfig"},
-        "MaxSize" : "2",
-        "MinSize" : "1",
-        "LoadBalancerNames" :  [ { "Ref" : "MyLoadbalancer" } ]
-      }
-    }
   },
 
   "Outputs": {
