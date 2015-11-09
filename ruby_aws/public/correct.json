@@ -1,7 +1,7 @@
 {
   "AWSTemplateFormatVersion" : "2010-09-09",
 
-  "Description" : "AWS CloudFormation Sample Template: Sample template that can be used to test EC2 updates. **WARNING** This template creates an Amazon Ec2 Instance. You will be billed for the AWS resources used if you create a stack from this template.",
+  "Description" : "A CloudFormation template that will deploy the Nutrition Information System on AWS. It creates a relational data store and uses an EC2 instance to store data into the RDS instance. It also creates an autoscaling group which can automatically scale up/down depending on the CPU Utilization. The incoming requests to this application are managed by a load balancer",
 
   "Parameters" : {
     "SSHLocation" : {
@@ -24,7 +24,6 @@
       "Type": "AWS::EC2::KeyPair::KeyName",
       "ConstraintDescription" : "Can contain only ASCII characters."
     }
-
   },
 
   "Mappings" : {
@@ -77,77 +76,13 @@
           "config" : {
             "packages" : {
               "yum" : {
-                "httpd"             : [],
-                "php"               : [],
-                "php-mysql"         : [],
-                "mysql"             : [],
+                "mysql"       : [],
                 "mysql-server": [],
                 "mysql-libs": []
               }
             },
-
-            "files" : {
-
-              "/var/www/html/index.html" : {
-                "content" : { "Fn::Join" : ["", [
-                  "<html>\n",
-                  "  <head>\n",
-                  "    <title>AWS CloudFormation PHP Sample</title>\n",
-                  "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\">\n",
-                  "  </head>\n",
-                  "  <body>\n",
-                  "    <h1>Welcome to the AWS CloudFormation PHP Sample</h1>\n",
-                  "    <p/>\n",
-                  "  </body>"
-                ]]},
-                "mode"    : "000644",
-                "owner"   : "apache",
-                "group"   : "apache"
-              },
-              "/var/www/html/index.php" : {
-                "content" : { "Fn::Join" : [ "", [
-                  "<?php\n",
-                  "$connection = mysqli_connect(\"" , {"Fn::GetAtt": ["MyRDSInstance","Endpoint.Address"]},"\", \"root\", \"subbu1993\", \"nutritioninfo\");\n",
-                  "$query = \"select * from foodinfo where Name='\".$_GET['q'].\" ' \"; \n",
-                  "$result = $connection->query($query);\n",
-                  "$row = $result->fetch_assoc();\n",
-                  "$output = \"{Carbohydrates: \".$row[\"Carbohydrate\"].\" |  Proteins: \".$row[\"Protein\"].\" |  Vitamins: \".$row[\"Vitamins\"].\" |  Fat: \".$row[\"Fat\"].\"}\";\n",
-                  "echo json_encode($output);\n",
-                  "?>\n"
-                ]]},
-                "mode"    : "000644",
-                "owner"   : "apache",
-                "group"   : "apache"
-              },
-
-              "/etc/cfn/cfn-hup.conf" : {
-                "content" : { "Fn::Join" : ["", [
-                  "[main]\n",
-                  "stack=", { "Ref" : "AWS::StackId" }, "\n",
-                  "region=", { "Ref" : "AWS::Region" }, "\n"
-                ]]},
-                "mode"    : "000400",
-                "owner"   : "root",
-                "group"   : "root"
-              },
-
-              "/etc/cfn/hooks.d/cfn-auto-reloader.conf" : {
-                "content": { "Fn::Join" : ["", [
-                  "[cfn-auto-reloader-hook]\n",
-                  "triggers=post.update\n",
-                  "path=Resources.WebServerInstance.Metadata.AWS::CloudFormation::Init\n",
-                  "action=/opt/aws/bin/cfn-init -s ", { "Ref" : "AWS::StackId" }, " -r WebServerInstance ",
-                                                   " --region     ", { "Ref" : "AWS::Region" }, "\n",
-                  "runas=root\n"
-                ]]}
-              }
-            },
-
             "services" : {
               "sysvinit" : {
-                "httpd"    : { "enabled" : "true", "ensureRunning" : "true" },
-                "cfn-hup" : { "enabled" : "true", "ensureRunning" : "true",
-                    "files" : ["/etc/cfn/cfn-hup.conf", "/etc/cfn/hooks.d/cfn-auto-reloader.conf"]},
                 "mysqld": { "enabled" : "true", "ensureRunning" : "true" }
               }
             }
@@ -161,28 +96,29 @@
         "InstanceType"   : { "Ref" : "InstanceType" },
         "SecurityGroups" : [ {"Ref" : "WebServerSecurityGroup"} ],
         "KeyName"        : { "Ref" : "KeyName" },
+        "InstanceInitiatedShutdownBehavior" : "terminate",
+
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
-             "#!/bin/bash -xe\n",
-             "yum update -y aws-cfn-bootstrap\n",
+              "#!/bin/bash -xe\n",
+              "yum update -y aws-cfn-bootstrap\n",
 
-             "# Install the files and packages from the metadata\n",
-             "/opt/aws/bin/cfn-init -v ",
-             "         --stack ", { "Ref" : "AWS::StackName" },
-             "         --resource WebServerInstance ",
-             "         --region ", { "Ref" : "AWS::Region" }, "\n",
+              "# Install the files and packages from the metadata\n",
+              "/opt/aws/bin/cfn-init -v ",
+              "         --stack ", { "Ref" : "AWS::StackName" },
+              "         --resource WebServerInstance ",
+              "         --region ", { "Ref" : "AWS::Region" }, "\n",
 
-             "# Start up the cfn-hup daemon to listen for changes to the Web Server metadata\n",
-             "/opt/aws/bin/cfn-hup || error_exit 'Failed to start cfn-hup'\n",
-
-             "# Signal the status from cfn-init\n",
-             "/opt/aws/bin/cfn-signal -e $? ",
-             "         --stack ", { "Ref" : "AWS::StackName" },
-             "         --resource WebServerInstance ",
-             "         --region ", { "Ref" : "AWS::Region" }, "\n",
+              "# Signal the status from cfn-init\n",
+              "/opt/aws/bin/cfn-signal -e $? ",
+              "         --stack ", { "Ref" : "AWS::StackName" },
+              "         --resource WebServerInstance ",
+              "         --region ", { "Ref" : "AWS::Region" }, "\n",
 
              "#!/bin/bash -xe\n",
              "wget https://s3-us-west-2.amazonaws.com/dbjvrs/db.sql\n",
-             "mysql -h " , {"Fn::GetAtt": ["MyRDSInstance","Endpoint.Address"]}, " -P 3306 -u root --password=subbu1993 < db.sql\n"
+             "mysql -h " , {"Fn::GetAtt": ["MyRDSInstance","Endpoint.Address"]}, " -P 3306 -u root --password=subbu1993 < db.sql\n",
+             "shutdown -h now\n"
+
         ]]}}
       },
       "CreationPolicy" : {
@@ -404,12 +340,8 @@
   },
 
   "Outputs" : {
-    "WebsiteURL" : {
-      "Description" : "Application URL",
-      "Value" : { "Fn::Join" : ["", ["http://", { "Fn::GetAtt" : [ "WebServerInstance", "PublicDnsName" ]}]] }
-    },
     "URL": {
-      "Description": "The URL of the website",
+      "Description": "The URL of the application",
       "Value": {
         "Fn::Join": ["",["http://",{"Fn::GetAtt": ["MyLoadbalancer","DNSName"]}]]
       }
