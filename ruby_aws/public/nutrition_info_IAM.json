@@ -60,22 +60,36 @@
       "Properties": {
           "AssumeRolePolicyDocument": {
             "Version" : "2012-10-17",
-            "Statement" : [
-              {
+            "Statement" : [{
+                "Effect" : "Allow",
                 "Principal": {
                   "Service": [
                     "ec2.amazonaws.com"
                   ]
                 },
+                "Action" : [ "sts:AssumeRole" ]
+              }]
+          },
+          "Path": "/",
+          "Policies":[{
+            "PolicyName" : "FullRDSAccessPolicy",
+            "PolicyDocument" : {
+              "Version" : "2012-10-17",
+              "Statement" : [{
                 "Action" : [
-                  "rds:*"
+                  "rds:*",
+                  "ec2:DescribeAccountAttributes",
+                  "ec2:DescribeAvailabilityZones",
+                  "ec2:DescribeVpcs"
                 ],
-                "Effect" : "Allow"
-              }
-            ]
-          }
+                "Effect" : "Allow",
+                "Resource" : "*"
+              }]
+            }
+          }]
       }
     },
+
     "RDSReadOnlyAccess": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -84,25 +98,32 @@
             "Statement" : [
               {
                 "Principal": {
-                  "Service": [
-                    "ec2.amazonaws.com"
-                  ]
+                  "Service": [ "ec2.amazonaws.com"  ]
                 },
+                "Effect" : "Allow",
+                "Action" : [ "sts:AssumeRole" ]
+              }]
+          },
+          "Policies":[{
+            "PolicyName" : "ReadRDSAccessPolicy",
+            "PolicyDocument" : {
+              "Version" : "2012-10-17",
+              "Statement" : [{
                 "Action" : [
                   "rds:Describe*",
                   "rds:ListTagsForResource"
                 ],
-                "Effect" : "Allow"
-              }
-            ]
-          }
+                "Effect" : "Allow",
+                "Resource" : "*"
+              }]
+            }
+          }]
       }
     },
 
     "FullAccessEC2Role": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
-        "InstanceProfileName": "full-access-permission",
         "Path": "/",
         "Roles": [ {"Ref": "FullRDSAccessRole"} ]
       }
@@ -111,7 +132,6 @@
     "ReadOnlyEC2Role": {
       "Type": "AWS::IAM::InstanceProfile",
       "Properties": {
-        "InstanceProfileName": "read-only-permission",
         "Path": "/",
         "Roles": [ {"Ref": "RDSReadOnlyAccess"} ]
       }
